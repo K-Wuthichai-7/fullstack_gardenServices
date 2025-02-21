@@ -1,26 +1,36 @@
 
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const app = express();
+require('dotenv').config();
+const path = require("path");
 
 const customers = require('./routers/customers');
 const quotations = require('./routers/quotations');
-const contracts = require('./routers/contracts');
+const { router: contractsRouter } = require('./routers/contracts');  // แก้ไขการ import
 const invoices = require('./routers/invoices');
 const schedules = require('./routers/schedules');
 const services = require('./routers/services');
+const payments = require('./routers/payment');
+const transactions = require('./routers/transactions');
+const QRcode_generator = require('./routers/QRcode_generator');
 
 app.use(cors());
 app.use(express.json());
 
+// ให้ Express เสิร์ฟไฟล์จาก D:\uploads
+app.use("/uploads", express.static("D:/uploads"));
+
 // Routes
 app.use('/api/customers', customers);
 app.use('/api/quotations', quotations);
-app.use('/api/contracts', contracts);
+app.use('/api/contracts', contractsRouter);
 app.use('/api/invoices', invoices);
 app.use('/api/schedules', schedules);
 app.use('/api/services', services);
+app.use('/api/payments', payments);
+app.use('/api/transactions', transactions);
+app.use('/api/generate-qr', QRcode_generator);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

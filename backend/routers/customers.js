@@ -35,87 +35,75 @@ router.get('/:id', async (req, res) => {
 });
 
 
-
 router.post('/register', async (req, res) => {
   const connection = await db.getConnection(); // 🔹 ใช้ connection แยก
   try {
-    const { 
-      customer: { first_name, last_name, phone, email, address },
-      garden: { area_size, garden_type, special_requirements }
-    } = req.body;
+    const { first_name, last_name, phone, email, address, idCard_taxId, legal_entity, password, type_users } = req.body;
+    await connection.beginTransaction();
     
-    await connection.beginTransaction(); // ✅ ใช้ connection.beginTransaction()
-    
-    // บันทึกข้อมูลลูกค้า
-    const [customerResult] = await connection.execute(
-      'INSERT INTO customers (first_name, last_name, phone, email, address) VALUES (?, ?, ?, ?, ?)',
-      [first_name, last_name, phone, email, address]
+    const [result] = await connection.query(
+      'INSERT INTO customers (first_name, last_name, phone, email, address, idCard_taxId, legal_entity, password, type_users) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [first_name, last_name, phone, email, address, idCard_taxId, legal_entity, password, type_users]
     );
     
-    // บันทึกข้อมูลสวน
-    await connection.execute(
-      'INSERT INTO garden_details (customer_id, area_size, garden_type, special_requirements) VALUES (?, ?, ?, ?)',
-      [customerResult.insertId, area_size, garden_type, special_requirements]
-    );
-    
-    await connection.commit(); // ✅ ใช้ connection.commit()
-    res.status(201).json({ 
-      message: 'Customer and garden details registered successfully',
-      customer_id: customerResult.insertId
-    });
+    await connection.commit();
+    res.status(201).json({ message: 'Customer registered successfully', customer_id: result.insertId });
   } catch (error) {
-    await connection.rollback(); // ✅ ใช้ connection.rollback() แทน
+    await connection.rollback();
     res.status(500).json({ message: error.message });
   } finally {
-    connection.release(); // ✅ คืน connection กลับไปที่ pool
+    connection.release();
   }
 });
 
 
-router.put('/:id', async (req, res) => {
-  const connection = await db.getConnection(); // ใช้ connection เฉพาะ
-  try {
-    const customerId = req.params.id; // ได้รับ `id` จาก URL parameter
-    const { 
-      customer: { first_name, last_name, phone, email, address },
-      garden: { area_size, garden_type, special_requirements }
-    } = req.body; // รับข้อมูลลูกค้าและสวนที่ต้องการอัปเดต
 
-    // ตรวจสอบว่ามีลูกค้าในระบบหรือไม่
-    const [existingCustomer] = await connection.execute(
-      'SELECT * FROM customers WHERE customer_id = ?', [customerId]
+router.put('/update/:id', async (req, res) => {
+  const connection = await db.getConnection();
+  try {
+    const { id } = req.params;
+    const { first_name, last_name, phone, email, address, idCard_taxId, legal_entity, password, type_users } = req.body;
+    await connection.beginTransaction();
+    
+    const [result] = await connection.query(
+      'UPDATE customers SET first_name = ?, last_name = ?, phone = ?, email = ?, address = ?, idCard_taxId = ?, legal_entity = ?, password = ?, type_users = ? WHERE customer_id = ?',
+      [first_name, last_name, phone, email, address, idCard_taxId, legal_entity, password, type_users, id]
     );
     
-    if (existingCustomer.length === 0) {
+    await connection.commit();
+    if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Customer not found' });
     }
-
-    // เริ่มต้น transaction
-    await connection.beginTransaction();
-
-    // อัปเดตข้อมูลลูกค้า
-    await connection.execute(
-      'UPDATE customers SET first_name = ?, last_name = ?, phone = ?, email = ?, address = ? WHERE customer_id = ?',
-      [first_name, last_name, phone, email, address, customerId]
-    );
-
-    // อัปเดตข้อมูลสวน
-    await connection.execute(
-      'UPDATE garden_details SET area_size = ?, garden_type = ?, special_requirements = ? WHERE customer_id = ?',
-      [area_size, garden_type, special_requirements, customerId]
-    );
-    
-    // คอมมิตการอัปเดต
-    await connection.commit();
-
-    res.status(200).json({ message: 'Customer and garden details updated successfully' });
+    res.status(200).json({ message: 'Customer updated successfully' });
   } catch (error) {
-    await connection.rollback(); // ย้อนกลับหากเกิดข้อผิดพลาด
+    await connection.rollback();
     res.status(500).json({ message: error.message });
   } finally {
-    connection.release(); // คืน connection กลับ pool
+    connection.release();
   }
 });
+
+router.delete('/delete/:id', async (req, res) => {
+  const connection = await db.getConnection();
+  try {
+    const { id } = req.params;
+    await connection.beginTransaction();
+    
+    const [result] = await connection.query('DELETE FROM customers WHERE customer_id =?', [id]);
+    
+    await connection.commit();
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+    res.status(200).json({ message: 'Customer deleted successfully' });
+  } catch (error) {
+    await connection.rollback();
+    res.status(500).json({ message: error.message });
+  } finally {
+    connection.release();
+  }
+});
+
 
 
 

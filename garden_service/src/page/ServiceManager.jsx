@@ -49,22 +49,6 @@ const ServiceManagement = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ส่งข้อมูลเพิ่ม/แก้ไขบริการ
-//   const handleSubmit = async () => {
-//     try {
-//       if (editing) {
-//         // อัปเดตบริการ
-//         await axios.put(`http://localhost:3000/api/services/updateService/${editing}`, formData);
-//       } else {
-//         // เพิ่มบริการใหม่
-//         await axios.post("http://localhost:3000/api/services/createService", formData);
-//       }
-//       fetchServices();
-//       handleClose();
-//     } catch (error) {
-//       console.error("Error saving service:", error);
-//     }
-//   };
 
 const handleSubmit = async () => {
     try {

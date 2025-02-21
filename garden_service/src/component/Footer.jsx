@@ -3,9 +3,9 @@ import React from 'react'
 const Footer = () => {
   return (
     <>
-        <div className='footer mt-3'>
+        <div className='footer'>
             
-            <footer className=" sticky-bottom d-flex flex-wrap justify-content-between align-items-center py-3  border-top mt-3" style={{background:'#131f30'}}>
+            <footer className=" sticky-bottom d-flex flex-wrap justify-content-between align-items-center py-3  border-top " style={{background:'#131f30'}}>
          
                 
                 <div className="col-md-4 d-flex align-items-center">
