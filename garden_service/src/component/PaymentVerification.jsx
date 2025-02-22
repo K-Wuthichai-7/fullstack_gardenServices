@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Image, Container } from "react-bootstrap";
+import { Table, Button, Modal, Image, Container, Pagination } from "react-bootstrap";
 import axios from "axios";
 
 const PaymentVerification = () => {
@@ -7,6 +7,8 @@ const PaymentVerification = () => {
   const [searchTerm, setSearchTerm] = useState(""); 
   const [selectedSlip, setSelectedSlip] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
   useEffect(() => {
     fetchData();
@@ -60,6 +62,12 @@ const PaymentVerification = () => {
       payment.amount.toString().includes(searchTerm);
   });
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentPayments = filteredPayments.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
+
   return (
     <Container className="p-4">
       <h2>ตรวจสอบการชำระเงิน</h2>
@@ -76,9 +84,9 @@ const PaymentVerification = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredPayments.map((payment, index) => (
+          {currentPayments.map((payment, index) => (
             <tr key={payment.id}>
-              <td>{index + 1}</td>
+              <td>{indexOfFirstItem + index + 1}</td>
               <td>{payment.first_name + " " + payment.last_name}</td>
               <td>{payment.amount} บาท</td>
               <td>{new Date(payment.created_at).toLocaleString()}</td>
@@ -107,6 +115,7 @@ const PaymentVerification = () => {
           ))}
         </tbody>
       </Table>
+    
 
       {/* Modal แสดงสลิป */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -122,6 +131,28 @@ const PaymentVerification = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+        
+      {/* Pagination */}
+      <Pagination>
+        <Pagination.Prev 
+          onClick={() => setCurrentPage(currentPage - 1)} 
+          disabled={currentPage === 1} 
+        />
+        {[...Array(totalPages).keys()].map((number) => (
+          <Pagination.Item 
+            key={number + 1} 
+            active={number + 1 === currentPage} 
+            onClick={() => setCurrentPage(number + 1)}
+          >
+            {number + 1}
+          </Pagination.Item>
+        ))}
+        <Pagination.Next 
+          onClick={() => setCurrentPage(currentPage + 1)} 
+          disabled={currentPage === totalPages} 
+        />
+      </Pagination>
     </Container>
   );
 };

@@ -8,8 +8,13 @@ import AdminPanel from "./page/AdminPanel";
 import PaymentVerification from "./component/PaymentVerification";
 import ServiceManagement from "./page/ServiceManager";
 import CustomerManagement from "./page/CustomerManagement";
+import AuthPage from "./page/AuthPage";
 
 const App = () => {
+
+
+
+
   return (
     <Router>
       <Routes>
@@ -17,10 +22,11 @@ const App = () => {
           <Route index element={<Carousel_img />} />
           <Route path="about" element={<About />} />
           <Route path="customer" element={<Customer />} />
-          <Route path="service_manager" element={<ServiceManager />} />
+        
+          {/* <Route path="login" element={<AuthPage />} /> */}
           
           {/* แอดมิน */}
-          <Route path="admin" element={<AdminPanel />}>
+          <Route path="admin/" element={<AdminPanel />}>
             <Route path="payments" element={<PaymentVerification />} />
             <Route path="serviceManager" element={<ServiceManagement />} />
             <Route path="CustomerManager" element={<CustomerManagement />} />

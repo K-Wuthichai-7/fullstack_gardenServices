@@ -9,70 +9,6 @@ require("dotenv").config();
 
 const router = express.Router();
 
-// สร้างสัญญาบริการ
-// ฟังก์ชัน generateContract ที่แก้ไขแล้ว
-// async function generateContract(paymentId, customerName, amount) {
-//   console.log(`generateContract called with paymentId: ${paymentId} (${typeof paymentId}), customerName: ${customerName}, amount: ${amount}`);
-  
-//   return new Promise((resolve, reject) => {
-//     try {
-//       console.log("Creating new PDFDocument");
-//       const doc = new PDFDocument();
-      
-//       // Ensure paymentId is a string
-//       const safePaymentId = String(paymentId);
-//       console.log(`Using safePaymentId: ${safePaymentId}`);
-      
-//       // Create an absolute path for saving the file
-//       const contractPath = `D:/uploads/contract/contract_${safePaymentId}.pdf`;
-//       console.log(`Contract path: ${contractPath}`);
-      
-//       // Create contracts directory if it doesn't exist
-//       const dirPath = path.dirname(contractPath);
-//       console.log(`Checking if directory exists: ${dirPath}`);
-//       if (!fs.existsSync(dirPath)) {
-//         console.log(`Creating directory: ${dirPath}`);
-//         fs.mkdirSync(dirPath, { recursive: true });
-//       }
-      
-//       console.log("Creating write stream");
-//       const writeStream = fs.createWriteStream(contractPath);
-//       console.log("Piping doc to write stream");
-//       doc.pipe(writeStream);
-      
-//       console.log("Adding content to PDF");
-//       doc.fontSize(20).text("สัญญาการชำระเงิน", { align: "center" });
-//       doc.moveDown();
-//       doc.fontSize(14).text(`รหัสชำระเงิน: ${safePaymentId}`);
-//       doc.text(`ชื่อลูกค้า: ${customerName}`);
-//       doc.text(`จำนวนเงิน: ${amount} บาท`);
-//       doc.text(`วันที่ทำรายการ: ${new Date().toLocaleString()}`);
-//       doc.moveDown();
-//       doc.text("ขอบคุณสำหรับการใช้บริการ", { align: "center" });
-      
-//       console.log("Ending PDF document");
-//       doc.end();
-      
-//       writeStream.on("finish", () => {
-//         console.log(`Contract PDF generated at: ${contractPath}`);
-//         // ส่งเฉพาะ relative path กลับไป
-//         const relativePath = `/uploads/contract/contract_${safePaymentId}.pdf`;
-//         console.log(`Returning relative path: ${relativePath}`);
-//         resolve(relativePath);
-//       });
-      
-//       writeStream.on("error", (error) => {
-//         console.error("Write stream error:", error);
-//         reject(error);
-//       });
-      
-//     } catch (error) {
-//       console.error("Error in generateContract:", error);
-//       reject(error);
-//     }
-//   });
-// }
-
 async function generateContract(paymentId, customerName, amount) {
   console.log(`generateContract called with paymentId: ${paymentId} (${typeof paymentId}), customerName: ${customerName}, amount: ${amount}`);
   
@@ -86,7 +22,7 @@ async function generateContract(paymentId, customerName, amount) {
       console.log(`Using safePaymentId: ${safePaymentId}`);
       
       // Create an absolute path for saving the file
-      const contractPath = `D:/uploads/contract/contract_${safePaymentId}.pdf`;
+      const contractPath = `C:/Users/uploads/contract/contract_${safePaymentId}.pdf`;
       console.log(`Contract path: ${contractPath}`);
       
       // Create contracts directory if it doesn't exist
@@ -104,7 +40,7 @@ async function generateContract(paymentId, customerName, amount) {
       
       // Load Thai font
       // const fontPath = `D:/uploads/,'fonts', 'THSarabunNew.ttf`;
-      const fontPath = path.join("D:/uploads/fonts/THSarabunNew.ttf");
+      const fontPath = path.join("C:/Users/uploads/fonts/THSarabunNew.ttf");
 
       doc.font(fontPath);
       
@@ -114,7 +50,7 @@ async function generateContract(paymentId, customerName, amount) {
       doc.fontSize(14).text("677/1 ถนนพระราม 4 แขวงรองเมือง เขตปทุมวัน กรุงเทพมหานคร 10330", { align: "center" });
       doc.moveDown(2);
 
-      doc.fontSize(24).text("สัญญาการชำระเงิน", { align: "center", underline: true });
+      doc.fontSize(24).text("ใบเสร็จชำระเงิน", { align: "center", underline: true });
       doc.moveDown();
       
       doc.fontSize(16).text(`รหัสชำระเงิน: ${safePaymentId}`);
@@ -138,7 +74,7 @@ async function generateContract(paymentId, customerName, amount) {
       doc.text(`(${customerName})`, 100, signatureY + 20);
       doc.text("ผู้ชำระเงิน", 100, signatureY + 40);
       
-      doc.text("ลงชื่อ ____________________________", 350, signatureY);
+      doc.text("ลงชื่อ วรัญญู ชูทอง ", 350, signatureY);
       doc.text("(ตัวแทนบริษัท)", 350, signatureY + 20);
       doc.text("ผู้บริหาร", 350, signatureY + 40);
       

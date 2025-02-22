@@ -6,10 +6,10 @@ const AdminNavbar = ({ searchTerm, setSearchTerm }) => {
   return (
     <Navbar bg="light" expand="lg" className="shadow-sm">
       <Container fluid>
-        <Navbar.Brand href="#">Admin Panel</Navbar.Brand>
+        <Navbar.Brand href="#">Admin</Navbar.Brand>
         
         {/* Search Bar */}
-        <Form className="d-flex ms-auto">
+        {/* <Form className="d-flex ms-auto">
           <InputGroup>
             <FormControl
               type="search"
@@ -19,24 +19,7 @@ const AdminNavbar = ({ searchTerm, setSearchTerm }) => {
             />
             <InputGroup.Text style={{background:'#131f30'}}><FaSearch  style={{color:'#fefefe'}}/></InputGroup.Text>
           </InputGroup>
-        </Form>
-
-        <Navbar.Toggle aria-controls="navbar-nav" />
-        <Navbar.Collapse id="navbar-nav">
-          <Nav className="ms-auto">
-            <Dropdown align="end">
-              <Dropdown.Toggle variant="light" id="dropdown-basic">
-                <FaUserCircle size={24} /> Admin
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item href="#">Profile</Dropdown.Item>
-                <Dropdown.Item href="#">Settings</Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item href="#">Logout</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Nav>
-        </Navbar.Collapse>
+        </Form> */}
       </Container>
     </Navbar>
   );

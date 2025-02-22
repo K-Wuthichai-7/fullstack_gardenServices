@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PromtPay from './PromtPay'
 
 const PaymentModal = ({ closeModal }) => {
   const [serviceType, setServiceType] = useState('');
@@ -9,6 +10,9 @@ const PaymentModal = ({ closeModal }) => {
   const [calculationResult, setCalculationResult] = useState(null);
   const [paymentModal, setPaymentModal] = useState(false);
   const [qrCodeData, setQrCodeData] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+
+console.log(isLoggedIn,'isLoggedIn')
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -21,6 +25,12 @@ const PaymentModal = ({ closeModal }) => {
       }
     };
     fetchServices();
+
+      // ตรวจสอบสถานะการล็อกอินจาก LocalStorage หรือ API
+    const users = localStorage.getItem("user"); 
+    if (users) {
+      setIsLoggedIn(true);
+    }
   }, []);
 
   const handleSubmit = async () => {
@@ -37,6 +47,7 @@ const PaymentModal = ({ closeModal }) => {
       const result = await response.json();
       if (response.ok) {
         setCalculationResult(result);
+        
       } else {
         console.error('Error:', result.message);
       }
@@ -61,11 +72,22 @@ const PaymentModal = ({ closeModal }) => {
       if (response.ok) {
         setQrCodeData(result.qrCodeImage);
         setPaymentModal(true);
+      
       }
     } catch (error) {
       console.error('Error generating QR code:', error);
     }
   };
+
+  const handlePaymentClick = () => {
+    if (!isLoggedIn) {
+      alert("กรุณาเข้าสู่ระบบก่อนทำการชำระเงิน");
+      // หรือ redirect ไปหน้า login เช่น window.location.href = "/login";
+    } else {
+      handlePayment();
+    }
+  };
+ 
 
   const uniqueServiceTypes = Array.from(new Set(serviceTypes.map((type) => type.type)));
 
@@ -150,7 +172,7 @@ const PaymentModal = ({ closeModal }) => {
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={closeModal}>ยกเลิก</button>
               {calculationResult ? (
-                <button type="button" className="btn btn-primary" onClick={handlePayment}>ชำระเงิน</button>
+                <button type="button" className="btn btn-primary" onClick={handlePaymentClick}>ชำระเงิน</button>
               ) : (
                 <button type="button" className="btn btn-primary" onClick={handleSubmit}>คำนวณ</button>
               )}
@@ -160,35 +182,7 @@ const PaymentModal = ({ closeModal }) => {
       </div>
 
       {paymentModal && (
-        <div className="modal fade show" style={{ display: 'block' }} tabIndex={-1}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">ชำระเงิน</h5>
-                <button type="button" className="btn-close" onClick={() => setPaymentModal(false)}></button>
-              </div>
-              <div className='modal-body text-center'>
-              <h4 style={{color:'#0061b1'}}>พร้อมเพย์</h4>
-                  <span>บริษัท โกลเด้นริเวอร์ เซอร์วิส จำกัด</span><br />
-              </div>
-              <div className="modal-body text-center">
-                <div className="qr-code-container">
-                  {qrCodeData && (
-                    <img 
-                      src={`data:image/png;base64,${qrCodeData}`} 
-                      alt="QR Code" 
-                      style={{ maxWidth: '200px' }}
-                    />
-                  )}
-                </div>
-                <p>จำนวนเงิน: {calculationResult?.total_amount} บาท</p>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setPaymentModal(false)}>ปิด</button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <PromtPay setPaymentModal={setPaymentModal} qrCodeData={qrCodeData} calculationResult={calculationResult}/>
       )}
     </>
   );
